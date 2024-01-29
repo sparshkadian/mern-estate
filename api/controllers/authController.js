@@ -28,10 +28,10 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign({ _id: validUser._id }, process.env.JWT_SECRET_KEY);
     const { password: hashedPassword, ...userInfo } = validUser._doc;
 
-    res
-      .cookie('access_token', token, { httpOnly: true })
-      .status(200)
-      .json(userInfo);
+    res.cookie('access_token', token, { httpOnly: true }).status(200).json({
+      status: 'success',
+      userInfo,
+    });
   } catch (error) {
     next(new AppError(error.message, 500));
   }

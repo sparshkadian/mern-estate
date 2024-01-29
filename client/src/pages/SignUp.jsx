@@ -51,6 +51,7 @@ const SignUp = () => {
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           onChange={handleInputChange}
+          value={formData.userName}
           type='text'
           id='userName'
           placeholder='username'
@@ -58,6 +59,7 @@ const SignUp = () => {
         />
         <input
           onChange={handleInputChange}
+          value={formData.email}
           type='email'
           id='email'
           placeholder='email'
@@ -65,6 +67,7 @@ const SignUp = () => {
         />
         <input
           onChange={handleInputChange}
+          value={formData.password}
           type='password'
           id='password'
           placeholder='password'

@@ -17,6 +17,9 @@ export const signup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    if (email === '' || password === '') {
+      return next(new AppError('Both fields are required', 400));
+    }
     const validUser = await User.findOne({ email });
     if (!validUser) {
       return next(new AppError('User not found', 404));

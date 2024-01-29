@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -8,7 +9,6 @@ const SignUp = () => {
     email: '',
     password: '',
   });
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
@@ -32,15 +32,15 @@ const SignUp = () => {
       setFormData({ userName: '', email: '', password: '' });
       const data = await res.json();
       if (data.status != 'success') {
-        setError(data.message);
         setLoading(false);
-        return;
+        throw new Error(data.message);
       }
-      setError(null);
       setLoading(false);
+      toast.success('Account Created Successfully');
       navigate('/sign-in');
     } catch (error) {
       setLoading(false);
+      toast.error(error.message);
     }
   };
 
@@ -89,8 +89,6 @@ const SignUp = () => {
           <span className='text-blue-700'>Sign in</span>
         </Link>
       </div>
-
-      {error && <p className='text-red-500 mt-5'>{error}</p>}
     </div>
   );
 };

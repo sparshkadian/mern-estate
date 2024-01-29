@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import globalErrorHandler from './controllers/errorController.js';
@@ -10,6 +11,7 @@ dotenv.config({ path: './.env' });
 
 const app = express();
 app.use(express.json());
+app.use(morgan('dev'));
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log(`DB connection Successfull 🎉`);

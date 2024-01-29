@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
@@ -28,16 +28,14 @@ const SignIn = () => {
       setFormData({ email: '', password: '' });
       const data = await res.json();
       if (data.status != 'success') {
-        setError(data.message);
         setLoading(false);
-        return;
+        throw new Error(data.message);
       }
-      console.log(data);
-      setError(null);
       setLoading(false);
       navigate('/');
     } catch (error) {
       setLoading(false);
+      toast.error(error.message);
     }
   };
 
@@ -78,8 +76,6 @@ const SignIn = () => {
           <span className='text-blue-700'>Sign up</span>
         </Link>
       </div>
-
-      {error && <p className='text-red-500 mt-5'>{error}</p>}
     </div>
   );
 };

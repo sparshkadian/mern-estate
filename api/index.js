@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
+import globalErrorHandler from './controllers/errorController.js';
+import AppError from './utils/AppError.js';
 
 dotenv.config({ path: './.env' });
 
@@ -19,3 +21,14 @@ app.listen(3000, () => {
 
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+
+app.all('*', (req, res, next) => {
+  next(
+    new AppError(
+      `The route ${req.originalUrl} does not exist on this server`,
+      400
+    )
+  );
+});
+
+app.use(globalErrorHandler);

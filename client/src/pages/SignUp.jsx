@@ -1,15 +1,23 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signUpStart,
+  signUpSuccess,
+  signUpFailure,
+} from '../redux/user/userSlice';
+import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     userName: '',
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData((prevValue) => ({
@@ -20,7 +28,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(signUpStart());
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -32,14 +40,14 @@ const SignUp = () => {
       setFormData({ userName: '', email: '', password: '' });
       const data = await res.json();
       if (data.status != 'success') {
-        setLoading(false);
+        dispatch(signUpFailure());
         throw new Error(data.message);
       }
-      setLoading(false);
+      dispatch(signUpSuccess(data.newUser));
       toast.success('Account Created Successfully');
       navigate('/sign-in');
     } catch (error) {
-      setLoading(false);
+      dispatch(signUpFailure());
       toast.error(error.message);
     }
   };
@@ -79,7 +87,7 @@ const SignUp = () => {
           type='submit'
           className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading ? 'Loading...' : 'Sign Up'}
+          {loading ? <Spinner /> : 'Sign Up'}
         </button>
       </form>
 

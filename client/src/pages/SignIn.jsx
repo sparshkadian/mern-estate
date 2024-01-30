@@ -6,6 +6,7 @@ import {
   signInSuccess,
   signInFailure,
 } from '../redux/user/userSlice';
+import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 
 const SignIn = () => {
@@ -74,7 +75,7 @@ const SignIn = () => {
           type='submit'
           className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading ? 'Loading...' : 'Sign In'}
+          {loading ? <Spinner /> : 'Sign In'}
         </button>
       </form>
 

@@ -7,6 +7,7 @@ import {
   signUpFailure,
 } from '../redux/user/userSlice';
 import Spinner from '../components/Spinner';
+import OAuth from '../components/OAuth';
 import toast from 'react-hot-toast';
 
 const SignUp = () => {
@@ -89,6 +90,7 @@ const SignUp = () => {
         >
           {loading ? <Spinner /> : 'Sign Up'}
         </button>
+        <OAuth />
       </form>
 
       <div className='flex gap-2 mt-5'>

@@ -5,7 +5,6 @@ const userSchema = mongoose.Schema(
     userName: {
       type: String,
       required: [true, 'user must have a username'],
-      unique: true,
     },
 
     email: {
@@ -17,6 +16,10 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: [true, 'user must set a password'],
+    },
+    avatar: {
+      type: String,
+      default: 'https://cdn-icons-png.flaticon.com/512/1053/1053244.png',
     },
   },
   { timestamps: true } // gives us time of creation and updation of a document

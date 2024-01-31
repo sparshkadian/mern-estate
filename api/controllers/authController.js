@@ -12,6 +12,21 @@ function generateToken(user, isNew, res) {
     .json({ status: 'success', userInfo });
 }
 
+export const verifyUserToken = (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return next(new AppError('Unauthorized', 401));
+  }
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+    if (err) {
+      return next(new AppError('Forbidden', 403));
+    } else {
+      req.user = user;
+    }
+  });
+  next();
+};
+
 export const signup = async (req, res, next) => {
   try {
     let { userName, email, password } = req.body;
@@ -50,7 +65,6 @@ export const google = async (req, res, next) => {
       generateToken(user, false, res);
     } else {
       // 16 character password
-      console.log('hello');
       const generatePassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);

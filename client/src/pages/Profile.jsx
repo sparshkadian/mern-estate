@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
   getDownloadURL,
@@ -7,20 +7,33 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
+import { profileChangeSuccess } from '../redux/user/userSlice';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setfilePerc] = useState(undefined);
   const [fileUploadError, setFileUploadError] = useState(undefined);
-  const [formData, setFormData] = useState({});
-  const { currentUser } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({
+    userName: currentUser.userName,
+    avatar: '',
+  });
 
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
+
+  const handleInputChange = (e) => {
+    setFormData((prevValue) => ({
+      ...prevValue,
+      [e.target.id]: e.target.value,
+    }));
+  };
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -49,6 +62,23 @@ const Profile = () => {
     );
   };
 
+  const handleUpdate = async (e) => {
+    try {
+      e.preventDefault();
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      dispatch(profileChangeSuccess(data.userInfo));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className='p-3 max-w-lg m-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -64,7 +94,7 @@ const Profile = () => {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={formData.avatar || currentUser.avatar}
+          src={currentUser.avatar}
           alt='profile'
           className='mt-2 self-center rounded-full object-cover h-24 w-24 cursor-pointer'
         />
@@ -81,15 +111,24 @@ const Profile = () => {
             ''
           )}
         </p>
-        <input type='text' id='userName' className='border p-3 rounded-lg' />
-        <input type='email' id='email' className='border p-3 rounded-lg' />
         <input
-          type='password'
-          id='password'
+          type='text'
+          onChange={handleInputChange}
+          id='userName'
+          value={formData.userName}
+          className='border p-3 rounded-lg'
+        />
+        <input
+          type='email'
+          disabled
+          value={currentUser.email}
           className='border p-3 rounded-lg'
         />
 
-        <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>
+        <button
+          onClick={handleUpdate}
+          className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
+        >
           Update
         </button>
       </form>

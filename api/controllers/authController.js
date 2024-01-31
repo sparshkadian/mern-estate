@@ -14,7 +14,7 @@ function generateToken(user, isNew, res) {
 
 export const signup = async (req, res, next) => {
   try {
-    const { userName, email, password } = req.body;
+    let { userName, email, password } = req.body;
     password = bcryptjs.hashSync(password, 10);
     const createNewUser = await User.create({ userName, email, password });
     generateToken(createNewUser, true, res);

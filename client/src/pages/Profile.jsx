@@ -7,19 +7,24 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
-import { profileChangeSuccess } from '../redux/user/userSlice';
+import {
+  profileUpdateStart,
+  profileUpdateSuccess,
+  profileUpdateFailure,
+} from '../redux/user/userSlice';
+import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setfilePerc] = useState(undefined);
   const [fileUploadError, setFileUploadError] = useState(undefined);
   const [formData, setFormData] = useState({
     userName: currentUser.userName,
-    avatar: '',
+    avatar: currentUser.avatar,
   });
 
   useEffect(() => {
@@ -63,8 +68,9 @@ const Profile = () => {
   };
 
   const handleUpdate = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      dispatch(profileUpdateStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'PATCH',
         headers: {
@@ -73,9 +79,15 @@ const Profile = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      dispatch(profileChangeSuccess(data.userInfo));
+      if (data.status !== 'success') {
+        dispatch(profileUpdateFailure());
+        throw new Error(data.message);
+      }
+      dispatch(profileUpdateSuccess(data.userInfo));
+      toast.success('Profile Updated successfully!');
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
+      dispatch(profileUpdateFailure());
     }
   };
 
@@ -83,7 +95,7 @@ const Profile = () => {
     <div className='p-3 max-w-lg m-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
 
-      <form className='flex flex-col gap-4'>
+      <form onSubmit={handleUpdate} className='flex flex-col gap-4'>
         <input
           onChange={(e) => {
             setFile(e.target.files[0]);
@@ -126,10 +138,11 @@ const Profile = () => {
         />
 
         <button
-          onClick={handleUpdate}
+          disabled={loading}
+          type='submit'
           className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
         >
-          Update
+          {loading ? <Spinner /> : 'Update'}
         </button>
       </form>
 

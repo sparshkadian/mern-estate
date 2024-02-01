@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
@@ -11,11 +12,15 @@ import {
   profileUpdateStart,
   profileUpdateSuccess,
   profileUpdateFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from '../redux/user/userSlice';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser, loading } = useSelector((state) => state.user);
   const fileRef = useRef(null);
@@ -91,6 +96,20 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+      dispatch(deleteUserSuccess());
+      navigate('/');
+    } catch (error) {
+      toast.error(error.message);
+      dispatch(deleteUserFailure());
+    }
+  };
+
   return (
     <div className='p-3 max-w-lg m-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -147,7 +166,12 @@ const Profile = () => {
       </form>
 
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>Delete account</span>
+        <span
+          onClick={handleDeleteUser}
+          className='text-red-700 cursor-pointer'
+        >
+          Delete account
+        </span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
     </div>

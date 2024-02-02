@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import About from './pages/About';
 import Header from './components/Header';
 import Protected from './components/Protected';
+import CreateListing from './pages/CreateListing';
 import { Toaster } from 'react-hot-toast';
 
 const App = () => {
@@ -22,6 +23,14 @@ const App = () => {
           element={
             <Protected>
               <Profile />
+            </Protected>
+          }
+        />
+        <Route
+          path='/create-listing'
+          element={
+            <Protected>
+              <CreateListing />
             </Protected>
           }
         />

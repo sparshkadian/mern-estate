@@ -1,5 +1,4 @@
 import mongoose, { mongo } from 'mongoose';
-import User from '../models/userModel.js';
 
 const listingSchema = mongoose.Schema(
   {
@@ -52,8 +51,7 @@ const listingSchema = mongoose.Schema(
       required: true,
     },
     userRef: {
-      type: mongoose.Types.ObjectId,
-      ref: User,
+      type: String,
       required: true,
     },
   },

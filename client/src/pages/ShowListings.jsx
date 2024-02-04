@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -6,7 +7,6 @@ const ShowListings = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
-  console.log(listings);
 
   useEffect(() => {
     getUserListings();
@@ -76,14 +76,9 @@ const ShowListings = () => {
                   >
                     DELETE
                   </span>
-                  <span
-                    onClick={() => {
-                      handleListingUpdate(listing._id);
-                    }}
-                    className='font-semibold text-green-600'
-                  >
-                    EDIT
-                  </span>
+                  <Link to={`/update-listing/${listing._id}`}>
+                    <span className='font-semibold text-green-600'>EDIT</span>
+                  </Link>
                 </div>
               </div>
             );

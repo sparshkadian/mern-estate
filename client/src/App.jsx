@@ -8,6 +8,8 @@ import Header from './components/Header';
 import Protected from './components/Protected';
 import CreateListing from './pages/CreateListing';
 import ShowListings from './pages/ShowListings';
+import UpdateListing from './pages/UpdateListing';
+import SingleListing from './pages/SingleListing';
 import { Toaster } from 'react-hot-toast';
 
 const App = () => {
@@ -35,7 +37,30 @@ const App = () => {
             </Protected>
           }
         />
-        <Route path='/listings/:userId' element={<ShowListings />} />
+        <Route
+          path='/listings/:userId'
+          element={
+            <Protected>
+              <ShowListings />
+            </Protected>
+          }
+        />
+        <Route
+          path='/update-listing/:listingId'
+          element={
+            <Protected>
+              <UpdateListing />
+            </Protected>
+          }
+        />
+        <Route
+          path='/listing/:listingId'
+          element={
+            <Protected>
+              <SingleListing />
+            </Protected>
+          }
+        />
       </Routes>
       <Toaster />
     </BrowserRouter>

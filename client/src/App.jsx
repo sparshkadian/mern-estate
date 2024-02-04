@@ -53,14 +53,7 @@ const App = () => {
             </Protected>
           }
         />
-        <Route
-          path='/listing/:listingId'
-          element={
-            <Protected>
-              <SingleListing />
-            </Protected>
-          }
-        />
+        <Route path='/listing/:listingId' element={<SingleListing />} />
       </Routes>
       <Toaster />
     </BrowserRouter>

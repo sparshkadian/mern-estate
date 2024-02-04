@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
 const ShowListings = () => {
+  const navigate = useNavigate();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -48,6 +49,10 @@ const ShowListings = () => {
     }
   };
 
+  const showListing = (listingId) => {
+    navigate(`/listing/${listingId}`);
+  };
+
   return (
     <div>
       {!loading && listings.length === 0 && (
@@ -68,7 +73,14 @@ const ShowListings = () => {
                   className='w-[40%]'
                   alt='listing-cover'
                 />
-                <p className='font-bold text-xl'>{listing.name}</p>
+                <p
+                  onClick={() => {
+                    showListing(listing._id);
+                  }}
+                  className='font-bold text-xl hover:underline'
+                >
+                  {listing.name}
+                </p>
                 <div className='p-2 flex flex-col gap-5 items-center'>
                   <span
                     onClick={() => handleDeleteListing(listing._id)}

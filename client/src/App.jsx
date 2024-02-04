@@ -7,6 +7,7 @@ import About from './pages/About';
 import Header from './components/Header';
 import Protected from './components/Protected';
 import CreateListing from './pages/CreateListing';
+import ShowListings from './pages/ShowListings';
 import { Toaster } from 'react-hot-toast';
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
             </Protected>
           }
         />
+        <Route path='/listings/:userId' element={<ShowListings />} />
       </Routes>
       <Toaster />
     </BrowserRouter>

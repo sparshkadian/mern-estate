@@ -20,6 +20,7 @@ import {
   signOutUserFailure,
 } from '../redux/user/userSlice';
 import Spinner from '../components/Spinner';
+import ShowListings from './ShowListings';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
@@ -202,6 +203,12 @@ const Profile = () => {
           Sign Out
         </span>
       </div>
+      <Link
+        to={`/listings/${currentUser._id}`}
+        className='text-green-700 font-semibold mt-5'
+      >
+        Show Listings
+      </Link>
     </div>
   );
 };

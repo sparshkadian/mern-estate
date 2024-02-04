@@ -17,17 +17,35 @@ export const createListing = async (req, res, next) => {
 };
 
 export const deleteListing = async (req, res, next) => {
+  const listing = await Listing.findOne({ _id: req.params.listingId });
+  if (req.user._id !== listing.userRef) {
+    return next(new AppError('You can only delete your own listing', 401));
+  }
   try {
-    const listing = await Listing.findOne({ _id: req.params.listingId });
-
-    if (req.user._id !== listing.userRef) {
-      return next(new AppError('You can only delete your own listing', 401));
-    }
-
-    await Listing.findByIdAndDelete({ _id: req.params.listingId });
+    await Listing.findByIdAndDelete({ _id: req.params.id });
     res.status(200).json({
       status: 'success',
       message: 'Listing has been deleted',
+    });
+  } catch (error) {
+    next(new AppError(error.message));
+  }
+};
+
+export const updateListing = async (req, res, next) => {
+  // const listing = await Listing.findOne({ _id: req.params.id });
+  // if (req.user.id !== listing.userRef) {
+  //   return next(new AppError('You can only update your own listing', 401));
+  // }
+  try {
+    const updatedListing = await Listing.findByIdAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    res.status(200).json({
+      status: 'success',
+      updatedListing,
     });
   } catch (error) {
     next(new AppError(error.message));

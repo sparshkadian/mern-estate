@@ -1,5 +1,6 @@
 import AppError from '../utils/AppError.js';
 import User from '../models/userModel.js';
+import Listing from '../models/listingModel.js';
 
 export const updateUser = async (req, res, next) => {
   try {
@@ -39,6 +40,21 @@ export const deleteUser = async (req, res, next) => {
     res.clearCookie('access_token');
     res.status(204).json({
       status: 'success',
+    });
+  } catch (error) {
+    next(new AppError(error.message));
+  }
+};
+
+export const getUserListings = async (req, res, next) => {
+  try {
+    if (req.user._id !== req.params.id) {
+      return next(new AppError('You can only view your own listings', 401));
+    }
+    const listings = await Listing.find({ userRef: req.params.id });
+    res.status(200).json({
+      status: 'success',
+      userListings: listings,
     });
   } catch (error) {
     next(new AppError(error.message));

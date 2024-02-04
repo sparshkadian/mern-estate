@@ -28,6 +28,26 @@ const ShowListings = () => {
     }
   };
 
+  const handleDeleteListing = async (listingId) => {
+    try {
+      setListings(
+        listings.filter((listing) => {
+          return listing._id !== listingId;
+        })
+      );
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.status !== 'success') {
+        throw new Error(data.message);
+      }
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div>
       {!loading && listings.length === 0 && (
@@ -40,7 +60,7 @@ const ShowListings = () => {
           listings.map((listing) => {
             return (
               <div
-                className='mt-4 cursor-pointer rounded-lg overflow-hidden hover:scale-105 transition-all ease-in-out duration-300 border-2 flex justify-between items-center'
+                className='mt-4 cursor-pointer rounded-lg overflow-hidden border-2 flex justify-between items-center'
                 key={listing._id}
               >
                 <img
@@ -50,8 +70,20 @@ const ShowListings = () => {
                 />
                 <p className='font-bold text-xl'>{listing.name}</p>
                 <div className='p-2 flex flex-col gap-5 items-center'>
-                  <span className='font-semibold text-red-600'>DELETE</span>
-                  <span className='font-semibold text-green-600'>EDIT</span>
+                  <span
+                    onClick={() => handleDeleteListing(listing._id)}
+                    className='font-semibold text-red-600'
+                  >
+                    DELETE
+                  </span>
+                  <span
+                    onClick={() => {
+                      handleListingUpdate(listing._id);
+                    }}
+                    className='font-semibold text-green-600'
+                  >
+                    EDIT
+                  </span>
                 </div>
               </div>
             );

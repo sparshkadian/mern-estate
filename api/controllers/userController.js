@@ -60,3 +60,19 @@ export const getUserListings = async (req, res, next) => {
     next(new AppError(error.message));
   }
 };
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      return next(new AppError('No user found', 404));
+    }
+    const { password, ...rest } = user._doc;
+    res.status(200).json({
+      status: 'success',
+      user: rest,
+    });
+  } catch (error) {
+    next(new AppError(error.message));
+  }
+};
